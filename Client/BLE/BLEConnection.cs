@@ -8,5 +8,9 @@ namespace Client.BLE
 {
     internal class BLEConnection
     {
+        public void Connect(string name)
+        {
+
+        }
     }
 }

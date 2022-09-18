@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
+using Windows.Devices.Bluetooth.GenericAttributeProfile;
 
 namespace Client.BLE
 {
@@ -20,12 +22,12 @@ namespace Client.BLE
             {
                 ScanningMode = BluetoothLEScanningMode.Active
             };
-            watcher.Received += Watcher_Received;
+            watcher.Received += WatcherReceived;
             watcher.Start();
 
         }
 
-        private async void Watcher_Received(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
+        private async void WatcherReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
         {
             if (isFindDevice)
                 return;
@@ -34,6 +36,12 @@ namespace Client.BLE
                 devicesList.Add(args.Advertisement.LocalName);
             }
             
+        }
+
+        public void DeviceFound(String name)
+        {
+            isFindDevice = true;
+
         }
     }
 }
