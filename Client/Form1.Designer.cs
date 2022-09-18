@@ -69,10 +69,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(692, 661);
             this.Controls.Add(this.connectButton);
             this.Controls.Add(this.findButton);
             this.Controls.Add(this.BLEList);
+            this.MinimumSize = new System.Drawing.Size(708, 700);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);

@@ -22,14 +22,14 @@ namespace Client
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
             observer.Start();
         }
 
 
         private async void findButton_Click(object sender, EventArgs e)
         {
-
+            // Add found device in observer to listbox 
+            // Check if listbox already contains item
             if (observer.devicesList != null)
             {
                 foreach(var item in observer.devicesList)
@@ -42,7 +42,9 @@ namespace Client
 
         private void connectButton_Click(object sender, EventArgs e)
         {
-
+            // Client clicked on choosed device
+            // and we tell to observer that needed device was found
+            observer.DeviceFound(BLEList.SelectedItem.ToString());
         }
     }
 }
