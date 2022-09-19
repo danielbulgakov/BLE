@@ -152,6 +152,7 @@ void loop() {
       Serial.print(sinxarray[i]); Serial.print( ' '); Serial.println(sinyarray[i]);
     }
 
+    
     SinXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinxarray), sizeof(sinxarray));
     SinYCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinyarray), sizeof(sinyarray));
     SinXCharacteristics.notify();
