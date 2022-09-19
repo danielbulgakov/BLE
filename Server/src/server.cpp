@@ -6,6 +6,7 @@
 #include <Arduino.h>
 #include <string.h>
 #include <toString.h>
+#include <cmath>
 
 #define bleServerName "TEST_ESP32"
 
@@ -142,9 +143,13 @@ void loop() {
 
     float x = -pi;
     for (int i = 0; i < 5; i++){
-      x += i * (pi/2);
       sinxarray[i] = x / wide;
-      sinyarray[i] = (-1 * (i % 2)) * height;
+      sinyarray[i] = height * sin(x * wide);
+      x += (pi/2);
+    }
+
+    for (int i = 0 ; i < 5; i ++){
+      Serial.print(sinxarray[i]); Serial.print( ' '); Serial.println(sinyarray[i]);
     }
 
     SinXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinxarray), sizeof(sinxarray));
