@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,18 +53,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BLE\BLEConnection.cs" />
+    <Compile Include="BLE\BLEController.cs" />
+    <Compile Include="BLE\BLEDevice.cs" />
     <Compile Include="BLE\BLEObserver.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="DeviceFrame.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="DeviceFrame.Designer.cs">
+      <DependentUpon>DeviceFrame.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StartFrame.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StartFrame.Designer.cs">
+      <DependentUpon>StartFrame.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="test.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="DeviceFrame.resx">
+      <DependentUpon>DeviceFrame.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StartFrame.resx">
+      <DependentUpon>StartFrame.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

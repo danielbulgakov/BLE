@@ -1,6 +1,6 @@
 ﻿namespace Client
 {
-    partial class Form1
+    partial class StartFrame
     {
         /// <summary>
         /// Required designer variable.

@@ -11,37 +11,41 @@ namespace Client.BLE
 {
     internal class BLEObserver
     {
-        BluetoothLEAdvertisementWatcher watcher { get; set; }
-        public List<String> devicesList { get; set; } = new List<String>();
+        BluetoothLEAdvertisementWatcher Watcher { get; set; }
+        public List<BLEDevice> DevicesList { get; set; } = new List<BLEDevice>();
         private bool isFindDevice { get; set; } = false;
+        public bool isActive { get; set; } = false; 
 
         public async void Start()
         {
-
-            watcher = new BluetoothLEAdvertisementWatcher()
+            this.isActive = true;
+            Watcher = new BluetoothLEAdvertisementWatcher()
             {
                 ScanningMode = BluetoothLEScanningMode.Active
             };
-            watcher.Received += WatcherReceived;
-            watcher.Start();
+            Watcher.Received += WatcherReceived;
+            Watcher.Stopped += WatcherStopped;
+            Watcher.Start();
 
         }
 
         private async void WatcherReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
         {
-            if (isFindDevice)
-                return;
-            if (!devicesList.Contains(args.Advertisement.LocalName) && args.Advertisement.LocalName != "")
+            if (isFindDevice) return;
+
+            
+            if ((DevicesList.Count == 0 || !DevicesList.Any(var => var.Equals(args.BluetoothAddress)))
+                    && args.Advertisement.LocalName != "")
             {
-                devicesList.Add(args.Advertisement.LocalName);
+                DevicesList.Add(new BLEDevice(args.Advertisement.LocalName, args.BluetoothAddress));
             }
             
         }
 
-        public void DeviceFound(String name)
+        private async void WatcherStopped(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementWatcherStoppedEventArgs args)
         {
-            isFindDevice = true;
-
+            DevicesList.Remove(DevicesList.Find(var => args.Equals(var)));
         }
+
     }
 }
