@@ -151,6 +151,10 @@ void loop() {
     SinYCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinyarray), sizeof(sinyarray));
     SinXCharacteristics.notify();
     SinYCharacteristics.notify();
+    SinWideCharacteristics.notify();
+    SinHeightCharacteristics.notify();
 
+    delay(5000);
   }
+
 }
