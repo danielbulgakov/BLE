@@ -31,10 +31,10 @@ BLEDescriptor BatteryDescriptor(BLEUUID((uint16_t)0x2903));
 BLECharacteristic TimeCharacteristics(CHARACTER_TIME_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
 BLEDescriptor TimeDescriptor(BLEUUID((uint16_t)0x2904));
 
-BLECharacteristic SinXCharacteristics(CHARACTER_SINX_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
+BLECharacteristic SinXCharacteristics(CHARACTER_SINX_UUID, BLECharacteristic::PROPERTY_READ );
 BLEDescriptor SinXDescriptor(BLEUUID((uint16_t)0x2910));
 
-BLECharacteristic SinYCharacteristics(CHARACTER_SINY_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
+BLECharacteristic SinYCharacteristics(CHARACTER_SINY_UUID, BLECharacteristic::PROPERTY_READ );
 BLEDescriptor SinYDescriptor(BLEUUID((uint16_t)0x2909));
 
 BLECharacteristic SinWideCharacteristics(CHARACTER_SIN_WIDE_UUID, BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_READ);
@@ -92,22 +92,22 @@ void setup(){
   // SERVICE_SENSOR_UUID characters add
   ServiceSensor->addCharacteristic(&SinXCharacteristics);
   SinXDescriptor.setValue("sin arg x function"); 
-  SinXCharacteristics.addDescriptor(new BLE2902());
+  // SinXCharacteristics.addDescriptor(new BLE2902());
   SinXCharacteristics.addDescriptor(&SinXDescriptor);
 
   ServiceSensor->addCharacteristic(&SinYCharacteristics);
   SinYDescriptor.setValue("sin arg y function"); 
-  SinYCharacteristics.addDescriptor(new BLE2902());
+  // SinYCharacteristics.addDescriptor(new BLE2902());
   SinYCharacteristics.addDescriptor(&SinYDescriptor);
 
   ServiceSensor->addCharacteristic(&SinWideCharacteristics);
   SinWideDescriptor.setValue("wide arg for sin function"); 
-  SinWideCharacteristics.addDescriptor(new BLE2902());
+  // SinWideCharacteristics.addDescriptor(new BLE2902());
   SinWideCharacteristics.addDescriptor(&SinWideDescriptor);
 
   ServiceSensor->addCharacteristic(&SinHeightCharacteristics);
   SinHeightDescriptor.setValue("height arg for sin function"); 
-  SinHeightCharacteristics.addDescriptor(new BLE2902());
+  // SinHeightCharacteristics.addDescriptor(new BLE2902());
   SinHeightCharacteristics.addDescriptor(&SinHeightDescriptor);
 
   ServiceSensor->start();
@@ -161,7 +161,7 @@ void loop() {
       Serial.print(sinxarray[i]); Serial.print( ' '); Serial.println(sinyarray[i]);
     }
     
-
+    
     SinXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinxarray), sizeof(sinxarray));
     SinYCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinyarray), sizeof(sinyarray));
     // SinXCharacteristics.notify();
