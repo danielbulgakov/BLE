@@ -60,14 +60,16 @@ class MyServerCallbacks: public BLEServerCallbacks {
   }
 };
 
+BLEServer *pServer;
+
 void setup(){
   Serial.begin(115200);
   
   // BLE-device init
   BLEDevice::init(bleServerName);
 
+  pServer = BLEDevice::createServer();
   // BLE-server init
-  BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
 
   // BLE-service init
@@ -112,14 +114,15 @@ void setup(){
 
   BatteryCharacteristics.setValue(to_str(battery));
   TimeCharacteristics.setValue(date);
-  SinWideCharacteristics.setValue(to_str(wide));
-  SinHeightCharacteristics.setValue(to_str(height));
+  SinWideCharacteristics.setValue(wide);
+  SinHeightCharacteristics.setValue(height);
 
 
   ServiceDevice->start();
   ServiceSensor->start();
 
   pServer->getAdvertising()->start();
+  
   Serial.println("Waiting a client connection to notify...");       
 
 
@@ -131,36 +134,47 @@ void loop() {
   // wide * x = [-p; -p/2;  0; p/2; p/2]
   //        y = [   0;    -1;  0;  -1;    0]
   if (deviceConnected) {
+
     float sinxarray[5];
     float sinyarray[5];
-    float wide, height;
+    float* wide, *height;
 
-    char *ptr, *ptr1;
-    wide = std::strtod(SinWideCharacteristics.getValue().c_str(), &ptr);
-    height = std::strtod(SinHeightCharacteristics.getValue().c_str(), &ptr1);
+    wide = reinterpret_cast<float*>(SinWideCharacteristics.getData());
+    height = reinterpret_cast<float*>(SinHeightCharacteristics.getData());
+
+    Serial.print("wide ");
+    Serial.println(*wide);
+    Serial.print("height ");
+    Serial.println(*height);
+
     
     // Serial.println(wide); Serial.println(height);
 
     float x = -pi;
     for (int i = 0; i < 5; i++){
-      sinxarray[i] = x / wide;
-      sinyarray[i] = height * sin(x * wide);
+      sinxarray[i] = x / (*wide);
+      sinyarray[i] = (*height) * sin(x * (*wide));
       x += (pi/2);
     }
 
     for (int i = 0 ; i < 5; i ++){
       Serial.print(sinxarray[i]); Serial.print( ' '); Serial.println(sinyarray[i]);
     }
-
     
+
     SinXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinxarray), sizeof(sinxarray));
     SinYCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinyarray), sizeof(sinyarray));
-    SinXCharacteristics.notify();
-    SinYCharacteristics.notify();
-    SinWideCharacteristics.notify();
-    SinHeightCharacteristics.notify();
+    // SinXCharacteristics.notify();
+    // //SinYCharacteristics.notify();
+    // SinWideCharacteristics.notify();
+    // SinHeightCharacteristics.notify();
 
     delay(5000);
   }
+  else {
+    Serial.println("Disconnected");
+    pServer->getAdvertising()->start();
+    delay(2000);
 
+  }
 }
