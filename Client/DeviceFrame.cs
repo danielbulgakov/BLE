@@ -32,7 +32,7 @@ namespace Client
         {
             
             var UpdateTimer = new System.Windows.Forms.Timer();
-            UpdateTimer.Interval = 2000;
+            UpdateTimer.Interval = 5000;
             UpdateTimer.Enabled = true;
             UpdateTimer.Tick += new EventHandler(UpdateValues);
 
@@ -41,8 +41,8 @@ namespace Client
         private void UpdateValues(Object myObject,
                                             EventArgs myEventArgs)
         {
-            esp32.WriteWide(2);
-            esp32.WriteHeight(2);
+            //esp32.WriteWide(2);
+            //esp32.WriteHeight(2);
             esp32.Refresh();
             chart1.Series["Line"].Points.Clear();
             for (int i = 0; i < 5; i++)
@@ -56,6 +56,7 @@ namespace Client
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)
         {
             esp32.WriteWide(hScrollBar1.Value);
+            
         }
 
         private void hScrollBar2_ValueChanged(object sender, EventArgs e)

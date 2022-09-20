@@ -38,6 +38,7 @@ namespace Client.BLE
 
         private GattDeviceService FindService(string uuid)
         {
+            if (props == null) return null;
             if (props.Status == GattCommunicationStatus.Success)
             {
                 var services = props.Services;
@@ -103,8 +104,11 @@ namespace Client.BLE
 
         public async void Refresh()
         {
+            props = await esp32.GetGattServicesAsync();
             var s = FindService("17b5290c-2e8b-11ed-a261-0242ac120002");
+            if (s == null) return;
             GattCharacteristicsResult characteristicsResult = await s.GetCharacteristicsAsync();
+           
             if (characteristicsResult.Status == GattCommunicationStatus.Success)
             {
                 var characteristics = characteristicsResult.Characteristics;
@@ -112,26 +116,32 @@ namespace Client.BLE
                 {
                     if (characteristic.Uuid.ToString().StartsWith("17b52c72-2e8b-11eb-a261-0242ac120002"))
                     {
-                        Console.WriteLine("1");
+                        //Console.WriteLine("1");
                         GattCharacteristicProperties properties = characteristic.CharacteristicProperties;
 
                         if (properties.HasFlag(GattCharacteristicProperties.Read))
                         {
                             GattReadResult gattResult = await characteristic.ReadValueAsync();
+
+
                             if (gattResult.Status == GattCommunicationStatus.Success)
                             {
-                                Console.WriteLine("im here x");
                                 var reader = DataReader.FromBuffer(gattResult.Value);
                                 byte[] input = new byte[reader.UnconsumedBufferLength];
                                 reader.ReadBytes(input);
 
-                                System.Buffer.BlockCopy(input, 0, x, 0, input.Length);
-                               
-                                for (int i = 0; i < x.Length; i++)
+                                x[0] = BitConverter.ToSingle(input, 0);
+                                x[1] = BitConverter.ToSingle(input, 4);
+                                x[2] = BitConverter.ToSingle(input, 8);
+                                x[3] = BitConverter.ToSingle(input, 12);
+                                x[4] = BitConverter.ToSingle(input, 16);
+
+                                    Console.WriteLine("argx");
+                                for (int i = 0; i < 5; i++)
                                 {
-                                    x[i] = (float)Math.Round(x[i], 2);
+                                    Console.WriteLine(x[i]);
                                 }
-                                
+
 
                             }
                         }
@@ -139,7 +149,7 @@ namespace Client.BLE
 
                     if (characteristic.Uuid.ToString().StartsWith("17b52c72-2e8b-11ef-a261-0242ac120002"))
                     {
-                        Console.WriteLine("2");
+                        //Console.WriteLine("2");
 
                         GattCharacteristicProperties properties = characteristic.CharacteristicProperties;
 
@@ -149,15 +159,34 @@ namespace Client.BLE
                             if (gattResult.Status == GattCommunicationStatus.Success)
                             {
                                 Console.WriteLine("im here y");
+
                                 var reader = DataReader.FromBuffer(gattResult.Value);
                                 byte[] input = new byte[reader.UnconsumedBufferLength];
                                 reader.ReadBytes(input);
-                                Console.WriteLine(input);
-                                System.Buffer.BlockCopy(input, 0, y, 0, input.Length);
+
+                                y[0] = BitConverter.ToSingle(input, 0);
+                                y[1] = BitConverter.ToSingle(input, 4);
+                                y[2] = BitConverter.ToSingle(input, 8);
+                                y[3] = BitConverter.ToSingle(input, 12);
+                                y[4] = BitConverter.ToSingle(input, 16);
+
+                                    Console.WriteLine("argy");
+                                for (int i = 0; i < 5; i++)
+                                {
+                                    Console.WriteLine(y[i]);
+                                }
+
+/*                                System.Buffer.BlockCopy(input, 0, y, 0, input.Length);
                                 for (int i = 0; i < y.Length; i++)
                                 {
-                                    y[i] = (float)Math.Round(y[i], 2);
-                                }
+                                    //y[i] = (float)Math.Round(y[i], 2);
+                                    Console.WriteLine(y[i]);
+                                }*//*                                System.Buffer.BlockCopy(input, 0, y, 0, input.Length);
+                                for (int i = 0; i < y.Length; i++)
+                                {
+                                    //y[i] = (float)Math.Round(y[i], 2);
+                                    Console.WriteLine(y[i]);
+                                }*/
 
                             }
                         }
@@ -165,7 +194,7 @@ namespace Client.BLE
 
                     if (characteristic.Uuid.ToString().StartsWith("17b52ea2-2e8b-11ed-a261-0242ac120002"))
                     {
-                        Console.WriteLine("3");
+                        //Console.WriteLine("3");
                         GattCharacteristicProperties properties = characteristic.CharacteristicProperties;
 
                         if (properties.HasFlag(GattCharacteristicProperties.Read))
@@ -173,7 +202,7 @@ namespace Client.BLE
                             GattReadResult gattResult = await characteristic.ReadValueAsync();
                             if (gattResult.Status == GattCommunicationStatus.Success)
                             {
-                                Console.WriteLine("im here wide");
+                                //Console.WriteLine("im here wide");
                                 var reader = DataReader.FromBuffer(gattResult.Value);
                                 byte[] input = new byte[reader.UnconsumedBufferLength];
                                 reader.ReadBytes(input);
@@ -185,8 +214,8 @@ namespace Client.BLE
                                 {
                                     wide = BitConverter.ToSingle(input, 0);
                                 }
-                                Console.WriteLine("wide");
-                                Console.WriteLine(wide);
+                                //Console.WriteLine("wide");
+                                //Console.WriteLine(wide);
 
 
                             }
@@ -195,7 +224,7 @@ namespace Client.BLE
 
                     if (characteristic.Uuid.ToString().StartsWith("17b52fc4-2e8b-11ed-a261-0242ac120002"))
                     {
-                        Console.WriteLine("4");
+                        //Console.WriteLine("4");
                         GattCharacteristicProperties properties = characteristic.CharacteristicProperties;
 
                         if (properties.HasFlag(GattCharacteristicProperties.Read))
@@ -203,7 +232,7 @@ namespace Client.BLE
                             GattReadResult gattResult = await characteristic.ReadValueAsync();
                             if (gattResult.Status == GattCommunicationStatus.Success)
                             {
-                                Console.WriteLine("im here wide");
+                                //Console.WriteLine("im here wide");
                                 var reader = DataReader.FromBuffer(gattResult.Value);
                                 byte[] input = new byte[reader.UnconsumedBufferLength];
                                 reader.ReadBytes(input);
@@ -215,8 +244,8 @@ namespace Client.BLE
                                 {
                                     height = BitConverter.ToSingle(input, 0);
                                 }
-                                Console.WriteLine("wide");
-                                Console.WriteLine(height);
+                                //Console.WriteLine("wide");
+                                //Console.WriteLine(height);
 
 
                             }
