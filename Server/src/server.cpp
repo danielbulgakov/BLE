@@ -31,10 +31,10 @@ BLEDescriptor BatteryDescriptor(BLEUUID((uint16_t)0x2903));
 BLECharacteristic TimeCharacteristics(CHARACTER_TIME_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
 BLEDescriptor TimeDescriptor(BLEUUID((uint16_t)0x2904));
 
-BLECharacteristic SinXCharacteristics(CHARACTER_SINX_UUID, BLECharacteristic::PROPERTY_READ );
+BLECharacteristic SinXCharacteristics(CHARACTER_SINX_UUID, BLECharacteristic::PROPERTY_NOTIFY );
 BLEDescriptor SinXDescriptor(BLEUUID((uint16_t)0x2910));
 
-BLECharacteristic SinYCharacteristics(CHARACTER_SINY_UUID, BLECharacteristic::PROPERTY_READ );
+BLECharacteristic SinYCharacteristics(CHARACTER_SINY_UUID, BLECharacteristic::PROPERTY_NOTIFY );
 BLEDescriptor SinYDescriptor(BLEUUID((uint16_t)0x2909));
 
 BLECharacteristic SinWideCharacteristics(CHARACTER_SIN_WIDE_UUID, BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_READ);
@@ -92,12 +92,12 @@ void setup(){
   // SERVICE_SENSOR_UUID characters add
   ServiceSensor->addCharacteristic(&SinXCharacteristics);
   SinXDescriptor.setValue("sin arg x function"); 
-  // SinXCharacteristics.addDescriptor(new BLE2902());
+  SinXCharacteristics.addDescriptor(new BLE2902());
   SinXCharacteristics.addDescriptor(&SinXDescriptor);
 
   ServiceSensor->addCharacteristic(&SinYCharacteristics);
   SinYDescriptor.setValue("sin arg y function"); 
-  // SinYCharacteristics.addDescriptor(new BLE2902());
+  SinYCharacteristics.addDescriptor(new BLE2902());
   SinYCharacteristics.addDescriptor(&SinYDescriptor);
 
   ServiceSensor->addCharacteristic(&SinWideCharacteristics);
@@ -164,10 +164,9 @@ void loop() {
     
     SinXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinxarray), sizeof(sinxarray));
     SinYCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinyarray), sizeof(sinyarray));
-    // SinXCharacteristics.notify();
-    // //SinYCharacteristics.notify();
-    // SinWideCharacteristics.notify();
-    // SinHeightCharacteristics.notify();
+    SinXCharacteristics.notify();
+    SinYCharacteristics.notify();
+
 
     delay(5000);
   }
