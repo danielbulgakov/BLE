@@ -17,7 +17,6 @@ D:\Study\2022\ITLab\BLE\Client\bin\Debug\System.Security.SecureString.dll
 D:\Study\2022\ITLab\BLE\Client\bin\Debug\System.Threading.Overlapped.dll
 D:\Study\2022\ITLab\BLE\Client\bin\Debug\System.Xml.XPath.XDocument.dll
 D:\Study\2022\ITLab\BLE\Client\bin\Debug\Windows.winmd
-D:\Study\2022\ITLab\BLE\Client\obj\Debug\Client.Form1.resources
 D:\Study\2022\ITLab\BLE\Client\obj\Debug\Client.Properties.Resources.resources
 D:\Study\2022\ITLab\BLE\Client\obj\Debug\Client.csproj.GenerateResource.cache
 D:\Study\2022\ITLab\BLE\Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
@@ -51,3 +50,5 @@ C:\Study\itlab\BLE\Client\obj\Debug\Client.exe
 C:\Study\itlab\BLE\Client\obj\Debug\Client.pdb
 C:\Study\itlab\BLE\Client\obj\Debug\Client.StartFrame.resources
 C:\Study\itlab\BLE\Client\obj\Debug\Client.DeviceFrame.resources
+D:\Study\2022\ITLab\BLE\Client\obj\Debug\Client.DeviceFrame.resources
+D:\Study\2022\ITLab\BLE\Client\obj\Debug\Client.StartFrame.resources

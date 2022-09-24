@@ -16,7 +16,7 @@ namespace Client.BLE
         private bool isFindDevice { get; set; } = false;
         public bool isActive { get; set; } = false; 
 
-        public async void Start()
+        public void Start()
         {
             this.isActive = true;
             Watcher = new BluetoothLEAdvertisementWatcher()
@@ -29,7 +29,7 @@ namespace Client.BLE
 
         }
 
-        private async void WatcherReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
+        private void WatcherReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
         {
             if (isFindDevice) return;
 
@@ -37,12 +37,12 @@ namespace Client.BLE
             if ((DevicesList.Count == 0 || !DevicesList.Any(var => var.Equals(args.BluetoothAddress)))
                     && args.Advertisement.LocalName != "")
             {
-                DevicesList.Add(new BLEDevice(args.Advertisement.LocalName, args.BluetoothAddress));
+                DevicesList.Add(new BLEDevice(args.BluetoothAddress, args.Advertisement.LocalName));
             }
             
         }
 
-        private async void WatcherStopped(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementWatcherStoppedEventArgs args)
+        private void WatcherStopped(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementWatcherStoppedEventArgs args)
         {
             DevicesList.Remove(DevicesList.Find(var => args.Equals(var)));
         }

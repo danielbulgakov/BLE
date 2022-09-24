@@ -15,36 +15,43 @@ namespace Client
 {
     public partial class DeviceFrame : Form
     {
-        BLEesp32 esp32 = new BLEesp32();
+        BLEesp32 esp32;
         public DeviceFrame(ulong uuid)
         {
             InitializeComponent();
-            esp32.Connect(uuid);
+            esp32 = new BLEesp32(uuid);
+
+
 
             chart1.Series.Add("Line");
-         
-
-
         }
 
 
         private void DeviceFrame_Load(object sender, EventArgs e)
         {
-            
             var UpdateTimer = new System.Windows.Forms.Timer();
             UpdateTimer.Interval = 5000;
             UpdateTimer.Enabled = true;
             UpdateTimer.Tick += new EventHandler(UpdateValues);
+            hScrollBar1.Value = (int)esp32.wide;
+            hScrollBar2.Value = (int)esp32.height;
 
         }
 
-        private void UpdateValues(Object myObject,
+        private async void UpdateValues(Object myObject,
                                             EventArgs myEventArgs)
         {
-            //esp32.WriteWide(2);
-            //esp32.WriteHeight(2);
-            esp32.Refresh();
-            chart1.Series["Line"].Points.Clear();
+            Console.Write("x = {");
+            Array.ForEach(esp32.x, Console.Write);
+            Console.Write("} \ny = {");
+            Array.ForEach(esp32.y, Console.Write);
+            Console.WriteLine("}");
+
+            esp32.UpdateHeightAsync();
+            esp32.UpdateWideAsync();
+
+            try { chart1.Series["Line"].Points.Clear(); }
+            finally { };
             for (int i = 0; i < 5; i++)
             {
 
@@ -56,12 +63,14 @@ namespace Client
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)
         {
             esp32.WriteWide(hScrollBar1.Value);
+            //esp32.WriteWide(hScrollBar1.Value);
             
         }
 
         private void hScrollBar2_ValueChanged(object sender, EventArgs e)
         {
             esp32.WriteHeight(hScrollBar2.Value);
+            //esp32.WriteHeight(hScrollBar2.Value);
         }
     }
 }
