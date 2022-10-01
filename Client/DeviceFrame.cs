@@ -16,6 +16,8 @@ namespace Client
     public partial class DeviceFrame : Form
     {
         BLEesp32 esp32;
+        Timer UpdateTimer = new System.Windows.Forms.Timer();
+
         public DeviceFrame(ulong uuid)
         {
             InitializeComponent();
@@ -23,18 +25,19 @@ namespace Client
 
 
 
-            chart1.Series.Add("Line");
+            chart1.Series.Add("Sin");
+            chart1.Series.Add("Cos");
         }
 
 
         private void DeviceFrame_Load(object sender, EventArgs e)
         {
-            var UpdateTimer = new System.Windows.Forms.Timer();
+            
             UpdateTimer.Interval = 5000;
             UpdateTimer.Enabled = true;
             UpdateTimer.Tick += new EventHandler(UpdateValues);
-            hScrollBar1.Value = (int)esp32.wide;
-            hScrollBar2.Value = (int)esp32.height;
+            //hScrollBar1.Value = (int)esp32.wide;
+            //hScrollBar2.Value = (int)esp32.height;
 
         }
 
@@ -42,39 +45,67 @@ namespace Client
                                             EventArgs myEventArgs)
         {
             Console.Write("x = {");
-            Array.ForEach(esp32.x, Console.Write);
+            Array.ForEach(esp32.sinx, Console.Write);
             Console.Write("} \ny = {");
-            Array.ForEach(esp32.y, Console.Write);
+            Array.ForEach(esp32.cosx, Console.Write);
             Console.WriteLine("}");
 
-            esp32.UpdateHeightAsync();
-            esp32.UpdateWideAsync();
+            esp32.UpdateStepCosAsync();
+            esp32.UpdateStepSinAsync();
 
-            hScrollBar1.Value = (int)esp32.wide;
-            hScrollBar2.Value = (int)esp32.height;
 
-            try { chart1.Series["Line"].Points.Clear(); }
-            finally { };
-            for (int i = 0; i < 5; i++)
+
+            //hScrollBar1.Value = (int)esp32.wide;
+            //hScrollBar2.Value = (int)esp32.height;
+            try
             {
+                chart1.Series["Sin"].Points.Clear();
+                chart1.Series["Cos"].Points.Clear();
+            }
+            catch (System.NullReferenceException e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
-                chart1.Series["Line"].Points.AddXY(esp32.x[i], esp32.y[i]);
-                chart1.Series["Line"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            float x1 = 0, x2 = 0;
+
+            for (int i = 0; i < esp32.GetPackSize() / 10; i++)
+            {
+                chart1.Series["Sin"].Points.AddXY(x1, esp32.sinx[i]);
+                chart1.Series["Cos"].Points.AddXY(x2, esp32.cosx[i]);
+                x1 += esp32.stepSin; x2 += esp32.stepCos;
+                chart1.Series["Sin"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+                chart1.Series["Cos"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
             }
 
         }
 
-        private void hScrollBar1_ValueChanged(object sender, EventArgs e)
+
+
+
+
+        private void costrackBarChanged(object sender, EventArgs e)
         {
-            esp32.WriteWide(hScrollBar1.Value);
-            //esp32.WriteWide(hScrollBar1.Value);
-            
+            float val = 1 + (float)( (costrackBar.Value - 1) / 2f);
+            cosLabel.Text = "Cos Step = " + val.ToString("0.0");
+            esp32.WriteStepCos(val);
         }
 
-        private void hScrollBar2_ValueChanged(object sender, EventArgs e)
+        private void sintrackBarChanged(object sender, EventArgs e)
         {
-            esp32.WriteHeight(hScrollBar2.Value);
-            //esp32.WriteHeight(hScrollBar2.Value);
+            float val = 1 + (float)((sintrackBar.Value - 1) / 2f);
+            sinLabel.Text = "Sin Step = " + val.ToString("0.0");
+            esp32.WriteStepSin(val);
+        }
+
+        private void onClosing(object sender, FormClosingEventArgs e)
+        {
+            UpdateTimer.Enabled = false;
+        }
+
+        private void onClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

@@ -91,18 +91,18 @@ void setup(){
 
   // SERVICE_SENSOR_UUID characters add
   ServiceSensor->addCharacteristic(&SinXCharacteristics);
-  SinXDescriptor.setValue("sin arg x function"); 
+  SinXDescriptor.setValue("sin x function"); 
   SinXCharacteristics.addDescriptor(new BLE2902());
   SinXCharacteristics.addDescriptor(&SinXDescriptor);
 
   ServiceSensor->addCharacteristic(&CosXCharacteristics);
-  CosXDescriptor.setValue("sin arg y function"); 
+  CosXDescriptor.setValue("cos x function"); 
   CosXCharacteristics.addDescriptor(new BLE2902());
   CosXCharacteristics.addDescriptor(&CosXDescriptor);
 
   ServiceSensor->addCharacteristic(&SinStepCharacteristics);
   SinStepDescriptor.setValue("sinstep arg for sin function"); 
-  SinStepCharacteristics.addDescriptor(new BLE2902());
+  // SinStepCharacteristics.addDescriptor(new BLE2902());
   SinStepCharacteristics.addDescriptor(&SinStepDescriptor);
 
   ServiceSensor->addCharacteristic(&CosStepCharacteristics);
@@ -110,7 +110,7 @@ void setup(){
   // SinHeightCharacteristics.addDescriptor(new BLE2902());
   CosStepCharacteristics.addDescriptor(&CosStepDescriptor);
 
-  ServiceSensor->start();
+
 
   BatteryCharacteristics.setValue(to_str(battery));
   TimeCharacteristics.setValue(date);
@@ -130,7 +130,7 @@ void setup(){
 }
 
 
-const int size = 10;
+const int size = 100;
 float sinxarray[size];
 float cosxarray[size];
 
