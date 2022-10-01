@@ -41,7 +41,7 @@ namespace Client
 
         }
 
-        private async void UpdateValues(Object myObject,
+        private void UpdateValues(Object myObject,
                                             EventArgs myEventArgs)
         {
             Console.Write("x = {");
