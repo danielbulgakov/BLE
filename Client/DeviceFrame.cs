@@ -50,6 +50,9 @@ namespace Client
             esp32.UpdateHeightAsync();
             esp32.UpdateWideAsync();
 
+            hScrollBar1.Value = (int)esp32.wide;
+            hScrollBar2.Value = (int)esp32.height;
+
             try { chart1.Series["Line"].Points.Clear(); }
             finally { };
             for (int i = 0; i < 5; i++)
@@ -58,6 +61,7 @@ namespace Client
                 chart1.Series["Line"].Points.AddXY(esp32.x[i], esp32.y[i]);
                 chart1.Series["Line"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
             }
+
         }
 
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)

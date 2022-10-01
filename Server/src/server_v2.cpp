@@ -20,9 +20,9 @@
 
 // SERVICE_SENSOR_UUID characteristic uuid
 #define CHARACTER_SINX_UUID "17b52c72-2e8b-11er-a261-0242ac120002"
-#define CHARACTER_SINY_UUID "17b52c72-2e8b-11ef-a261-0242ac120002"
-#define CHARACTER_SIN_WIDE_UUID "17b52ea2-2e8b-11ed-a261-0242ac120002"
-#define CHARACTER_SIN_HEIGHT_UUID "17b52fc4-2e8b-11ed-a261-0242ac120002"
+#define CHARACTER_COSX_UUID "17b52c72-2e8b-11ef-a261-0242ac120002"
+#define CHARACTER_SIN_STEP_UUID "17b52ea2-2e8b-11ed-a261-0242ac120002"
+#define CHARACTER_COS_STEP_UUID "17b52fc4-2e8b-11ed-a261-0242ac120002"
 
 // Descrports and characterisitic init
 BLECharacteristic BatteryCharacteristics(CHARACTER_BATTERY_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
@@ -34,17 +34,17 @@ BLEDescriptor TimeDescriptor(BLEUUID((uint16_t)0x2904));
 BLECharacteristic SinXCharacteristics(CHARACTER_SINX_UUID, BLECharacteristic::PROPERTY_NOTIFY );
 BLEDescriptor SinXDescriptor(BLEUUID((uint16_t)0x2910));
 
-BLECharacteristic SinYCharacteristics(CHARACTER_SINY_UUID, BLECharacteristic::PROPERTY_NOTIFY );
-BLEDescriptor SinYDescriptor(BLEUUID((uint16_t)0x2909));
+BLECharacteristic CosXCharacteristics(CHARACTER_COSX_UUID, BLECharacteristic::PROPERTY_NOTIFY );
+BLEDescriptor CosXDescriptor(BLEUUID((uint16_t)0x2909));
 
-BLECharacteristic SinWideCharacteristics(CHARACTER_SIN_WIDE_UUID, BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_READ);
-BLEDescriptor SinWideDescriptor(BLEUUID((uint16_t)0x2906));
+BLECharacteristic SinStepCharacteristics(CHARACTER_SIN_STEP_UUID, BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_READ);
+BLEDescriptor SinStepDescriptor(BLEUUID((uint16_t)0x2906));
 
-BLECharacteristic SinHeightCharacteristics(CHARACTER_SIN_HEIGHT_UUID, BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_READ);
-BLEDescriptor SinHeightDescriptor(BLEUUID((uint16_t)0x2907));
+BLECharacteristic CosStepCharacteristics(CHARACTER_COS_STEP_UUID, BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_READ);
+BLEDescriptor CosStepDescriptor(BLEUUID((uint16_t)0x2907));
 
 // Characteristics values
-float wide = 1, height = 1;
+float sinstep = 1, cosstep = 1;
 int battery = 100;
 std::string date = "18.09.2022";
 float pi = 3.141592653589793238;
@@ -95,27 +95,27 @@ void setup(){
   SinXCharacteristics.addDescriptor(new BLE2902());
   SinXCharacteristics.addDescriptor(&SinXDescriptor);
 
-  ServiceSensor->addCharacteristic(&SinYCharacteristics);
-  SinYDescriptor.setValue("sin arg y function"); 
-  SinYCharacteristics.addDescriptor(new BLE2902());
-  SinYCharacteristics.addDescriptor(&SinYDescriptor);
+  ServiceSensor->addCharacteristic(&CosXCharacteristics);
+  CosXDescriptor.setValue("sin arg y function"); 
+  CosXCharacteristics.addDescriptor(new BLE2902());
+  CosXCharacteristics.addDescriptor(&CosXDescriptor);
 
-  ServiceSensor->addCharacteristic(&SinWideCharacteristics);
-  SinWideDescriptor.setValue("wide arg for sin function"); 
-  // SinWideCharacteristics.addDescriptor(new BLE2902());
-  SinWideCharacteristics.addDescriptor(&SinWideDescriptor);
+  ServiceSensor->addCharacteristic(&SinStepCharacteristics);
+  SinStepDescriptor.setValue("sinstep arg for sin function"); 
+  SinStepCharacteristics.addDescriptor(new BLE2902());
+  SinStepCharacteristics.addDescriptor(&SinStepDescriptor);
 
-  ServiceSensor->addCharacteristic(&SinHeightCharacteristics);
-  SinHeightDescriptor.setValue("height arg for sin function"); 
+  ServiceSensor->addCharacteristic(&CosStepCharacteristics);
+  CosStepDescriptor.setValue("cosstep arg for sin function"); 
   // SinHeightCharacteristics.addDescriptor(new BLE2902());
-  SinHeightCharacteristics.addDescriptor(&SinHeightDescriptor);
+  CosStepCharacteristics.addDescriptor(&CosStepDescriptor);
 
   ServiceSensor->start();
 
   BatteryCharacteristics.setValue(to_str(battery));
   TimeCharacteristics.setValue(date);
-  SinWideCharacteristics.setValue(wide);
-  SinHeightCharacteristics.setValue(height);
+  SinStepCharacteristics.setValue(sinstep);
+  CosStepCharacteristics.setValue(cosstep);
 
 
   ServiceDevice->start();
@@ -129,51 +129,52 @@ void setup(){
 
 }
 
+
+const int size = 10;
+float sinxarray[size];
+float cosxarray[size];
+
 void loop() {
-  // function is f = height * sin (wide * x)
-  // wide * x = [-p; -p/2;  0; p/2; p/2]
+  // function is f = cosstep * sin (sinstep * x)
+  // sinstep * x = [-p; -p/2;  0; p/2; p/2]
   //        y = [   0;    -1;  0;  -1;    0]
   if (deviceConnected) {
+    float* sinstep, *cosstep;
 
-    float sinxarray[5];
-    float sinyarray[5];
-    float* wide, *height;
 
-    wide = reinterpret_cast<float*>(SinWideCharacteristics.getData());
-    height = reinterpret_cast<float*>(SinHeightCharacteristics.getData());
+    sinstep = reinterpret_cast<float*>(SinStepCharacteristics.getData());
+    cosstep = reinterpret_cast<float*>(CosStepCharacteristics.getData());
 
-    Serial.print("wide ");
-    Serial.println(*wide);
-    Serial.print("height ");
-    Serial.println(*height);
+    Serial.print("sinstep ");
+    Serial.println(*sinstep);
+    Serial.print("cosstep ");
+    Serial.println(*cosstep);
 
-    
-    // Serial.println(wide); Serial.println(height);
-
-    float x = -pi;
-    for (int i = 0; i < 5; i++){
-      sinxarray[i] = x / (*wide);
-      sinyarray[i] = (*height) * sin(x * (*wide));
-      x += (pi/2);
+    float x1 = 0, x2 = 0;
+    for (int i = 0; i < size; i++){
+      sinxarray[i] = sin(x1);
+      cosxarray[i] = cos(x2);
+      x1 += *sinstep;
+      x2 += *cosstep;
     }
 
-    for (int i = 0 ; i < 5; i ++){
-      Serial.print(sinxarray[i]); Serial.print( ' '); Serial.println(sinyarray[i]);
+    for (int i = 0 ; i < size; i ++){
+      Serial.print(sinxarray[i]); Serial.print( ' '); Serial.println(cosxarray[i]);
     }
     
     
     SinXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinxarray), sizeof(sinxarray));
-    SinYCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinyarray), sizeof(sinyarray));
+    CosXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&cosxarray), sizeof(cosxarray));
     SinXCharacteristics.notify();
-    SinYCharacteristics.notify();
+    CosXCharacteristics.notify();
 
 
-    delay(5000);
+    delay(500);
   }
   else {
     Serial.println("Disconnected");
     pServer->getAdvertising()->start();
-    delay(2000);
+    delay(500);
 
   }
 }

@@ -21,8 +21,7 @@ namespace Client.BLE
         public BLEDevice(ulong uUID, string name = "")
         {
             UUID = uUID;
-            Name = name;
-            
+            Name = name;   
         }
 
         public bool Equals(BLEDevice obj)
