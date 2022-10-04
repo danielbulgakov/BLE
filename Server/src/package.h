@@ -27,6 +27,14 @@ public:
         // memset(dataPackage, atoi("0"), packageSize);
     }
 
+    cbyte * GetData() {
+        return dataPackage;
+    }
+
+    int GetLength(){
+        return packageSize;
+    }
+
 
     int AddData(DataType* data, int length = 1){
         if (!isFittable(sizeof(DataType) * length)) return -1;
