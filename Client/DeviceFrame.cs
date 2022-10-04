@@ -27,6 +27,8 @@ namespace Client
 
             chart1.Series.Add("Sin");
             chart1.Series.Add("Cos");
+            chart1.Series["Sin"].BorderWidth = 3;
+            chart1.Series["Cos"].BorderWidth = 3;
         }
 
 
