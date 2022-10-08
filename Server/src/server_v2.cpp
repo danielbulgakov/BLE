@@ -8,6 +8,13 @@
 #include <toString.h>
 #include <cmath>
 
+#define IFPACKAGE
+// #define DEBUG
+
+#ifdef IFPACKAGE
+  #include "package.h"
+#endif
+
 #define bleServerName "TEST_ESP32"
 
 // UUID
@@ -61,12 +68,23 @@ class MyServerCallbacks: public BLEServerCallbacks {
 };
 
 BLEServer *pServer;
+const int size = 10000/4;
+float sinxarray[size];
+float cosxarray[size];
+
+#ifdef IFPACKAGE
+  DataPackage<float> dataCos(size);
+  DataPackage<float> dataSin(size);
+#endif
 
 void setup(){
+
   Serial.begin(115200);
   
   // BLE-device init
   BLEDevice::init(bleServerName);
+  BLEDevice::setMTU(517);
+
 
   pServer = BLEDevice::createServer();
   // BLE-server init
@@ -94,11 +112,13 @@ void setup(){
   SinXDescriptor.setValue("sin x function"); 
   SinXCharacteristics.addDescriptor(new BLE2902());
   SinXCharacteristics.addDescriptor(&SinXDescriptor);
+  SinXCharacteristics.setIndicateProperty(1);
 
   ServiceSensor->addCharacteristic(&CosXCharacteristics);
   CosXDescriptor.setValue("cos x function"); 
   CosXCharacteristics.addDescriptor(new BLE2902());
   CosXCharacteristics.addDescriptor(&CosXDescriptor);
+  CosXCharacteristics.setIndicateProperty(1);
 
   ServiceSensor->addCharacteristic(&SinStepCharacteristics);
   SinStepDescriptor.setValue("sinstep arg for sin function"); 
@@ -129,10 +149,13 @@ void setup(){
 
 }
 
-
-const int size = 100;
-float sinxarray[size];
-float cosxarray[size];
+void SendData (BLECharacteristic ch, uint8_t * data, int size, int split = 600){
+    int packCount = ceil(size/split);
+    int byteLeft = size;
+    for (int i = 0; i < packCount; i++){
+      // ch.setValue
+    }
+}
 
 void loop() {
   // function is f = cosstep * sin (sinstep * x)
@@ -145,10 +168,12 @@ void loop() {
     sinstep = reinterpret_cast<float*>(SinStepCharacteristics.getData());
     cosstep = reinterpret_cast<float*>(CosStepCharacteristics.getData());
 
-    Serial.print("sinstep ");
-    Serial.println(*sinstep);
-    Serial.print("cosstep ");
-    Serial.println(*cosstep);
+    #ifdef DEBUG
+      Serial.print("sinstep ");
+      Serial.println(*sinstep);
+      Serial.print("cosstep ");
+      Serial.println(*cosstep);
+    #endif 
 
     float x1 = 0, x2 = 0;
     for (int i = 0; i < size; i++){
@@ -158,23 +183,33 @@ void loop() {
       x2 += *cosstep;
     }
 
-    for (int i = 0 ; i < size; i ++){
-      Serial.print(sinxarray[i]); Serial.print( ' '); Serial.println(cosxarray[i]);
-    }
+    #ifdef DEBUG
+      for (int i = 0 ; i < size; i ++){
+        Serial.print(sinxarray[i]); Serial.print( ' '); Serial.println(cosxarray[i]);
+      }
+    #endif
     
+    #ifdef IFPACKAGE
+      dataCos.AddData(cosxarray, size);
+      dataSin.AddData(sinxarray, size);
+      SinXCharacteristics.setValue(dataSin.GetData(), 600);
+      CosXCharacteristics.setValue(dataCos.GetData(), 600);
+    #else
+      SinXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinxarray), sizeof(sinxarray));
+      CosXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&cosxarray), sizeof(cosxarray));
+    #endif
     
-    SinXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinxarray), sizeof(sinxarray));
-    CosXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&cosxarray), sizeof(cosxarray));
     SinXCharacteristics.notify();
     CosXCharacteristics.notify();
 
-
-    delay(500);
+    delay(100);
   }
   else {
-    Serial.println("Disconnected");
+    #ifdef DEBUG
+      Serial.println("Disconnected");
+    #endif
     pServer->getAdvertising()->start();
-    delay(500);
+    delay(100);
 
   }
 }

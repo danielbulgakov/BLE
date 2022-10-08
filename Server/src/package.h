@@ -6,7 +6,7 @@ class DataPackage
 {
 private:
     cbyte * dataPackage;       // Массив хранения данных
-    int packageSize;    // Размер массива
+    int packageSize;    // Размер массива в байтах
     int endIndex;       // Индекс последнего не нулевого элемента
 
 public:
@@ -14,17 +14,21 @@ public:
     /**
      * @brief Конструкор DataPackage
      * 
-     * @param size размер пакета в байтах
+     * @param size размер пакета
      */
     DataPackage(int size)
     {
-        this->dataPackage = new cbyte[size];
-        this->packageSize = size;
+        this->dataPackage = new cbyte[size * sizeof(DataType)];
+        this->packageSize = size* sizeof(DataType);
         this->endIndex = 0;
         for (int i = 0; i < packageSize; i++){
             dataPackage[i] = 0;
         }
         // memset(dataPackage, atoi("0"), packageSize);
+    }
+
+    ~DataPackage(){
+        delete[] dataPackage;
     }
 
     cbyte * GetData() {
