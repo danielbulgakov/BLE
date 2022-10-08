@@ -35,7 +35,7 @@ namespace Client
         private void DeviceFrame_Load(object sender, EventArgs e)
         {
             
-            UpdateTimer.Interval = 5000;
+            UpdateTimer.Interval = 100;
             UpdateTimer.Enabled = true;
             UpdateTimer.Tick += new EventHandler(UpdateValues);
             //hScrollBar1.Value = (int)esp32.wide;
@@ -71,7 +71,7 @@ namespace Client
 
             float x1 = 0, x2 = 0;
 
-            for (int i = 0; i < esp32.GetPackSize() / 10; i++)
+            for (int i = 0; i < esp32.GetPackSize() / 5; i++)
             {
                 chart1.Series["Sin"].Points.AddXY(x1, esp32.sinx[i]);
                 chart1.Series["Cos"].Points.AddXY(x2, esp32.cosx[i]);

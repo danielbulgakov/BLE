@@ -61,6 +61,7 @@ namespace Client.BLE
         public async Task<byte[]> ReadRawAsync(string serviceUUID, string characterUUID)
         {
             byte[] result;
+            if (properties == null) return null;
             var service = FindService(properties.Services, serviceUUID);
             if (service == null) return null;
             var charResult = await service.GetCharacteristicsAsync();
