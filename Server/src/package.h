@@ -1,3 +1,6 @@
+#ifndef _DATAPACKAGE_
+#define _DATAPACKAGE_
+
 #include <type_traits>
 typedef uint8_t cbyte;
 
@@ -39,6 +42,10 @@ public:
         return packageSize;
     }
 
+    void Clear(){
+        memset(dataPackage, 0, packageSize);
+    }
+
 
     int AddData(DataType* data, int length = 1){
         if (!isFittable(sizeof(DataType) * length)) return -1;
@@ -70,3 +77,5 @@ private:
     
 
 };
+
+#endif // _DATAPACKAGE_

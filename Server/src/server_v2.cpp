@@ -149,13 +149,7 @@ void setup(){
 
 }
 
-void SendData (BLECharacteristic ch, uint8_t * data, int size, int split = 600){
-    int packCount = ceil(size/split);
-    int byteLeft = size;
-    for (int i = 0; i < packCount; i++){
-      // ch.setValue
-    }
-}
+
 
 void loop() {
   // function is f = cosstep * sin (sinstep * x)
