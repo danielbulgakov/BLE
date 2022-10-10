@@ -43,7 +43,12 @@ public:
     }
 
     void Clear(){
-        memset(dataPackage, 0, packageSize);
+        delete[] dataPackage;
+        this->dataPackage = new cbyte[this->packageSize];
+        this->endIndex = 0;
+        for (int i = 0; i < packageSize; i++){
+            dataPackage[i] = 0;
+        }
     }
 
 
@@ -69,7 +74,13 @@ private:
         }
     }
 
-
+    /**
+     * @brief Проверка на вместимость в байтах.
+     * 
+     * @param length размер в байтах.
+     * @return true если осталось место.
+     * @return false если не осталось места.
+     */
     bool isFittable(int length){
         return length <= (packageSize - endIndex);
     }

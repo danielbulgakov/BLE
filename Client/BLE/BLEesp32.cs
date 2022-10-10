@@ -13,7 +13,7 @@ using Windows.Media.Capture;
 using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Forms;
-
+using System.IO;
 
 namespace Client.BLE
 {
@@ -61,14 +61,14 @@ namespace Client.BLE
 
         public async void UpdateStepSinAsync()
         {
-            stepSin = ToFloat(await esp32.ReadRawAsync(ServiceUUID, wideUUID));
-            Console.WriteLine("Wide = " + stepSin.ToString());
+            //stepSin = ToFloat(await esp32.ReadRawAsync(ServiceUUID, wideUUID));
+            //Console.WriteLine("Wide = " + stepSin.ToString());
         }
 
         public async void UpdateStepCosAsync()
         {
-            stepCos = ToFloat(await esp32.ReadRawAsync(ServiceUUID, heightUUID));
-            Console.WriteLine("Height = " + stepCos.ToString());
+            //stepCos = ToFloat(await esp32.ReadRawAsync(ServiceUUID, heightUUID));
+            //Console.WriteLine("Height = " + stepCos.ToString());
         }
 
         public void WriteStepSin(float stepSin)
@@ -88,6 +88,13 @@ namespace Client.BLE
 
             var raw = ReadFromBuffer(args.CharacteristicValue);
             sinx = ToFloatArray(raw);
+
+            string log = "[" + DateTime.Now.ToString("hh.mm.ss.ffffff") + "]";
+            log += " BLE Client X class recieved data [";
+            foreach (var elem in sinx) log += elem.ToString() + " " ;
+            log += "]\n";
+            //File.AppendAllText("D:\\Study\\2022\\ITLab\\BLE\\Client\\Xlog.txt", log);
+            Console.Write(log);
         }
 
         private void YChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
@@ -95,6 +102,14 @@ namespace Client.BLE
 
             var raw = ReadFromBuffer(args.CharacteristicValue);
             cosx = ToFloatArray(raw);
+
+            string log = "[" + DateTime.Now.ToString("hh.mm.ss.ffffff") + "]";
+            log += " BLE Client Y class recieved data [";
+            foreach (var elem in cosx) log += elem.ToString() + " ";
+            log += "]\n";
+            //File.AppendAllText("D:\\Study\\2022\\ITLab\\BLE\\Client\\Ylog.txt", log);
+            Console.Write(log);
+
         }
 
 
