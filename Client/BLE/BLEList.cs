@@ -11,7 +11,7 @@ using Windows.Storage.Streams;
 
 namespace Client.BLE
 {
-    public class BLEController
+    public class BLEList
     {
         BLEObserver BLEObserver;
         public ulong ConnectDevice { set; get; } 

@@ -52,8 +52,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BLE\BLEConnection.cs" />
-    <Compile Include="BLE\BLEController.cs" />
+    <Compile Include="BLE\BLEesp32.cs" />
+    <Compile Include="BLE\BLEList.cs" />
     <Compile Include="BLE\BLEDevice.cs" />
     <Compile Include="BLE\BLEObserver.cs" />
     <Compile Include="DeviceFrame.cs">

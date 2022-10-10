@@ -19,7 +19,7 @@ namespace Client
             InitializeComponent();
         }
 
-        public BLEController bLEController = new BLEController();
+        public BLEList bLEController = new BLEList();
         private void Form1_Load(object sender, EventArgs e)
         {
         }
