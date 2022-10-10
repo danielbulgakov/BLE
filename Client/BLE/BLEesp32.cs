@@ -89,12 +89,8 @@ namespace Client.BLE
             var raw = ReadFromBuffer(args.CharacteristicValue);
             sinx = ToFloatArray(raw);
 
-            string log = "[" + DateTime.Now.ToString("hh.mm.ss.ffffff") + "]";
-            log += " BLE Client X class recieved data [";
-            foreach (var elem in sinx) log += elem.ToString() + " " ;
-            log += "]\n";
-            //File.AppendAllText("D:\\Study\\2022\\ITLab\\BLE\\Client\\Xlog.txt", log);
-            Console.Write(log);
+            toLog("..\\..\\logs\\Xlog.txt", "X", sinx);
+
         }
 
         private void YChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
@@ -103,15 +99,20 @@ namespace Client.BLE
             var raw = ReadFromBuffer(args.CharacteristicValue);
             cosx = ToFloatArray(raw);
 
-            string log = "[" + DateTime.Now.ToString("hh.mm.ss.ffffff") + "]";
-            log += " BLE Client Y class recieved data [";
-            foreach (var elem in cosx) log += elem.ToString() + " ";
-            log += "]\n";
-            //File.AppendAllText("D:\\Study\\2022\\ITLab\\BLE\\Client\\Ylog.txt", log);
-            Console.Write(log);
 
+
+            toLog("..\\..\\logs\\Ylog.txt", "Y", cosx);
         }
 
+
+        private void toLog(string path, string className, float[] items)
+        {
+            string log = "[" + DateTime.Now.ToString("hh.mm.ss.ffffff") + "]";
+            log += " BLE Client " + className + " class recieved data [";
+            foreach (var elem in items) log += elem.ToString() + " ";
+            log += "]\n";
+            File.AppendAllText(path, log);
+        }
 
 
         public static IBuffer WriteToBuffer(byte[] send)
