@@ -87,9 +87,13 @@ namespace Client.BLE
         {
 
             var raw = ReadFromBuffer(args.CharacteristicValue);
+
+            ParsePack pp = new ParsePack();
+            pp.Parse(raw);
+            
             sinx = ToFloatArray(raw);
 
-            toLog("..\\..\\logs\\Xlog.txt", "X", sinx);
+            toLog("..\\..\\logs\\Xlog.txt", pp.toLog(), null);
 
         }
 
@@ -107,9 +111,10 @@ namespace Client.BLE
 
         private void toLog(string path, string className, float[] items)
         {
+            
             string log = "[" + DateTime.Now.ToString("hh.mm.ss.ffffff") + "]";
             log += " BLE Client " + className + " class recieved data [";
-            foreach (var elem in items) log += elem.ToString() + " ";
+            //foreach (var elem in items) log += elem.ToString() + " ";
             log += "]\n";
             File.AppendAllText(path, log);
         }

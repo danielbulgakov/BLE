@@ -14,7 +14,8 @@
 #define DEBUG
 
 #ifdef IFPACKAGE
-  #include "package.h"
+  // #include "package.h"
+  #include "Packaging/titletedsending.h"
 #endif
 
 #define bleServerName "TEST_ESP32"
@@ -76,7 +77,7 @@ float sinxarray[size];
 
 #ifdef IFPACKAGE
   // DataPackage<float> dataCos(size);
-  DataPackage<float> dataSin(size);
+  // DataPackage<float> dataSin(size);
 #endif
 
 void setup(){
@@ -196,15 +197,15 @@ void loop() {
     
     #ifdef IFPACKAGE
       
-      dataSin.AddData(sinxarray, size);
+      // dataSin.AddData(sinxarray, size);
 
       
-      
+      TitledSend(SinXCharacteristics, reinterpret_cast<uint8_t*>(sinxarray), 10000, 400, -2, 0);
       // dataCos.AddData(cosxarray, size);
-      SendLongData(SinXCharacteristics, dataSin.GetData(), dataSin.GetLength(), 508, 20 ); 
+      // SendLongData(SinXCharacteristics, dataSin.GetData(), dataSin.GetLength(), 508, 20 ); 
 
       
-      dataSin.Clear();
+      // dataSin.Clear();
       // SendLongData(CosXCharacteristics, dataCos.GetData(), dataCos.GetLength() );
     #else
       SinXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinxarray), sizeof(sinxarray));

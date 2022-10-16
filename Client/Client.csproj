@@ -56,6 +56,7 @@
     <Compile Include="BLE\BLEList.cs" />
     <Compile Include="BLE\BLEDevice.cs" />
     <Compile Include="BLE\BLEObserver.cs" />
+    <Compile Include="BLE\ParsePack.cs" />
     <Compile Include="DeviceFrame.cs">
       <SubType>Form</SubType>
     </Compile>
