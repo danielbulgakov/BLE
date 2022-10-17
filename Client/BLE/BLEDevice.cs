@@ -47,10 +47,10 @@ namespace Client.BLE
             {
                 var characteristic = FindCharacteristic(charResult.Characteristics, characterUUID);
                 var Flags = characteristic.CharacteristicProperties;
-                if (Flags.HasFlag(GattCharacteristicProperties.Notify))
+                if (Flags.HasFlag(GattCharacteristicProperties.Indicate))
                 {
                     characteristic.ValueChanged += f;
-                    GattWriteResult status = await characteristic.WriteClientCharacteristicConfigurationDescriptorWithResultAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify);
+                    GattWriteResult status = await characteristic.WriteClientCharacteristicConfigurationDescriptorWithResultAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate);
                     return status;
                 }
             }

@@ -15,15 +15,19 @@ namespace Client.BLE
 
         public void Parse(byte[] buff)
         {
-            this.Head = Encoding.Default.GetString(buff).Substring(0,8);
-            var b = buff.Skip(8).ToArray(); 
-            this.Num = BitConverter.ToInt32(b, 0);
-            b = buff.Skip(4).ToArray();
-            this.Mcu = BitConverter.ToInt16(b, 0);
-            b = buff.Skip(3).ToArray();
-            b = b.Take(400).ToArray();
+            int offset = 0;
+            this.Head = System.Text.Encoding.UTF8.GetString(buff).Substring(0,8); 
+            offset = this.Head.Length + 1;  
+            this.Num = Convert.ToInt32(buff[offset]);
+            offset += 4;
+            this.Mcu = (short)(buff[offset + 1] << 8 | buff[offset]);
+            offset += 2 + 1 + 1;
+            var b = buff.Skip(offset - 1).ToArray();
+            b = b.Take(b.Length ).ToArray();
             this.Data = ToFloatArray(b);
         }
+
+
 
         public string toLog()
         {

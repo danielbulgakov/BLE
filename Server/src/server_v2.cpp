@@ -1,4 +1,3 @@
-#include "longdata.h"
 
 #include <BLEDevice.h>
 #include <BLEServer.h>
@@ -15,7 +14,7 @@
 
 #ifdef IFPACKAGE
   // #include "package.h"
-  #include "Packaging/titletedsending.h"
+  #include "Templates/send.h"
 #endif
 
 #define bleServerName "TEST_ESP32"
@@ -41,10 +40,10 @@ BLEDescriptor BatteryDescriptor(BLEUUID((uint16_t)0x2903));
 BLECharacteristic TimeCharacteristics(CHARACTER_TIME_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
 BLEDescriptor TimeDescriptor(BLEUUID((uint16_t)0x2904));
 
-BLECharacteristic SinXCharacteristics(CHARACTER_SINX_UUID, BLECharacteristic::PROPERTY_NOTIFY );
+BLECharacteristic SinXCharacteristics(CHARACTER_SINX_UUID, BLECharacteristic::PROPERTY_INDICATE );
 BLEDescriptor SinXDescriptor(BLEUUID((uint16_t)0x2910));
 
-BLECharacteristic CosXCharacteristics(CHARACTER_COSX_UUID, BLECharacteristic::PROPERTY_NOTIFY );
+BLECharacteristic CosXCharacteristics(CHARACTER_COSX_UUID, BLECharacteristic::PROPERTY_INDICATE );
 BLEDescriptor CosXDescriptor(BLEUUID((uint16_t)0x2909));
 
 BLECharacteristic SinStepCharacteristics(CHARACTER_SIN_STEP_UUID, BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_READ);
@@ -161,6 +160,7 @@ void loop() {
   // sinstep * x = [-p; -p/2;  0; p/2; p/2]
   //        y = [   0;    -1;  0;  -1;    0]
   if (deviceConnected) {
+    delay(3000);
     float* sinstep, *cosstep;
 
 
@@ -215,7 +215,7 @@ void loop() {
     // SinXCharacteristics.notify();
     // CosXCharacteristics.notify();
 
-    delay(1000);
+    
   }
   else {
     #ifdef DEBUG

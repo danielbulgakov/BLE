@@ -2,11 +2,11 @@
 #define _TITLED_SENDING_
 
 #include <BLECharacteristic.h>
-#include "titledpackage.h"
+#include "package.h"
 #include <cmath>
 #include <Arduino.h>
 
-constexpr int STD_DELAY = (int)20;
+constexpr int STD_DELAY = (int)50;
 
 /**
  * @brief Отправка пакета определенной структуры. 
@@ -17,20 +17,25 @@ constexpr int STD_DELAY = (int)20;
  * @param mcu дополнительная х-ка
  * @param offset смещение номера пакета.
  */
+
+
+
 void TitledSend(BLECharacteristic &ch, uint8_t* buff, int size, int stride, int mcu, int packNumOffset){
+    TemplatePackage tp;
     int packageInd = 0;
     int bytesLeft = size;
-    TitledPackage::Init();
-    Serial.print(TitledPackage::GetNum()); Serial.print(TitledPackage::GetMnu()); 
+    tp.SetMNU(mcu);
+    // Serial.print("[");for (int i = 0; i < 2500; i++ ) {Serial.print(reinterpret_cast<float*>(buff)[i]); Serial.print(',');}Serial.println("]");
     for (;bytesLeft > 0;packageInd += 1 + packNumOffset){
-        TitledPackage::SetNumber(packageInd);
-        TitledPackage::SetMNU(mcu);
-        TitledPackage::SetData((buff + packageInd * stride), stride);
+        tp.SetTitle("ECG_DATA");
+        tp.SetNumber(packageInd);
+        
+        tp.SetData(&buff[packageInd * stride], stride);
 
-        ch.setValue(TitledPackage::GetData(), TitledPackage::GetLenght());
-        ch.notify();
-
+        ch.setValue(tp.GetRawData(), tp.GetLen());
+        ch.indicate();
         Serial.print("Package {"); Serial.print(packageInd); Serial.println("} send");
+        Serial.print("[");for (int i = 0; i < 100; i++ ) {Serial.print(reinterpret_cast<float*>(tp.GetUsefulData())[i]); Serial.print(',');}Serial.println("]");
 
         bytesLeft-=stride;
         delay(STD_DELAY);
