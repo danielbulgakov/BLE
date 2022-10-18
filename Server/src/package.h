@@ -1,6 +1,7 @@
 #ifndef _DATAPACKAGE_
 #define _DATAPACKAGE_
 
+#include "Template/standart_package.h"
 #include <type_traits>
 typedef uint8_t cbyte;
 
@@ -8,6 +9,7 @@ template<class DataType>
 class DataPackage
 {
 private:
+//STATIC
     cbyte * dataPackage;       // Массив хранения данных
     int packageSize;    // Размер массива в байтах
     int endIndex;       // Индекс последнего не нулевого элемента

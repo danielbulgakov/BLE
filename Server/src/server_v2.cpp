@@ -1,5 +1,6 @@
 #include "longdata.h"
 
+
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
@@ -14,7 +15,7 @@
 #define DEBUG
 
 #ifdef IFPACKAGE
-  #include "package.h"
+  #include "Template/standart_package.h"
 #endif
 
 #define bleServerName "TEST_ESP32"
@@ -76,7 +77,7 @@ float sinxarray[size];
 
 #ifdef IFPACKAGE
   // DataPackage<float> dataCos(size);
-  DataPackage<float> dataSin(size);
+  StandartPackage dataSin;
 #endif
 
 void setup(){
@@ -86,6 +87,7 @@ void setup(){
   // BLE-device init
   BLEDevice::init(bleServerName);
   BLEDevice::setMTU(517);
+  
 
 
   pServer = BLEDevice::createServer();
@@ -196,15 +198,15 @@ void loop() {
     
     #ifdef IFPACKAGE
       
-      dataSin.AddData(sinxarray, size);
+      // dataSin.AddData(sinxarray, size);
 
-      
+    
       
       // dataCos.AddData(cosxarray, size);
-      SendLongData(SinXCharacteristics, dataSin.GetData(), dataSin.GetLength(), 508, 20 ); 
+      SendLongData(SinXCharacteristics, sinxarray, dataSin, 20); 
 
       
-      dataSin.Clear();
+      // dataSin.Clear();
       // SendLongData(CosXCharacteristics, dataCos.GetData(), dataCos.GetLength() );
     #else
       SinXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinxarray), sizeof(sinxarray));
