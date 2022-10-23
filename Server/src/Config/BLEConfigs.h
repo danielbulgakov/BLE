@@ -1,21 +1,8 @@
-
-#include <BLEDevice.h>
+#include <BLECharacteristic.h>
 #include <BLEServer.h>
-#include <BLEUtils.h>
+#include <BLEDevice.h>
 #include <BLE2902.h>
-
 #include <Arduino.h>
-#include <string.h>
-#include <toString.h>
-#include <cmath>
-
-#define IFPACKAGE
-#define DEBUG
-
-#ifdef IFPACKAGE
-  // #include "package.h"
-  #include "Templates/send.h"
-#endif
 
 #define bleServerName "TEST_ESP32"
 
@@ -52,11 +39,6 @@ BLEDescriptor SinStepDescriptor(BLEUUID((uint16_t)0x2906));
 BLECharacteristic CosStepCharacteristics(CHARACTER_COS_STEP_UUID, BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_READ);
 BLEDescriptor CosStepDescriptor(BLEUUID((uint16_t)0x2907));
 
-// Characteristics values
-float sinstep = 1, cosstep = 1;
-int battery = 100;
-std::string date = "18.09.2022";
-float pi = 3.141592653589793238;
 
 bool deviceConnected = false;
 
@@ -70,20 +52,11 @@ class MyServerCallbacks: public BLEServerCallbacks {
 };
 
 BLEServer *pServer;
-const int size = 10000/sizeof(float);
-float sinxarray[size];
-// float cosxarray[size];
+BLEService *ServiceDevice;
+BLEService *ServiceSensor;
 
-#ifdef IFPACKAGE
-  // DataPackage<float> dataCos(size);
-  // DataPackage<float> dataSin(size);
-#endif
-
-void setup(){
-
-  Serial.begin(115200);
-  
-  // BLE-device init
+void SetupBLE(){
+    // BLE-device init
   BLEDevice::init(bleServerName);
   BLEDevice::setMTU(517);
 
@@ -93,8 +66,8 @@ void setup(){
   pServer->setCallbacks(new MyServerCallbacks());
 
   // BLE-service init
-  BLEService *ServiceDevice = pServer->createService(SERVICE_SETTINGS_UUID);
-  BLEService *ServiceSensor = pServer->createService(SERVICE_SENSOR_UUID);
+  ServiceDevice = pServer->createService(SERVICE_SETTINGS_UUID);
+  ServiceSensor = pServer->createService(SERVICE_SENSOR_UUID);
 
   // SERVICE_SETTINGS_UUID characters add 
   ServiceDevice->addCharacteristic(&BatteryCharacteristics);
@@ -134,12 +107,16 @@ void setup(){
 
 
 
-  BatteryCharacteristics.setValue(to_str(battery));
-  TimeCharacteristics.setValue(date);
-  SinStepCharacteristics.setValue(sinstep);
-  CosStepCharacteristics.setValue(cosstep);
+//   BatteryCharacteristics.setValue(to_str(battery));
+//   TimeCharacteristics.setValue(date);
+//   SinStepCharacteristics.setValue(sinstep);
+//   CosStepCharacteristics.setValue(cosstep);
 
 
+
+}
+
+void BLEStart(){
   ServiceDevice->start();
   ServiceSensor->start();
 
@@ -147,82 +124,4 @@ void setup(){
   
   Serial.println("Waiting a client connection to notify...");       
 
-
-
-}
-
-
-float ps = 0;
-// float pc = 1;
-
-void loop() {
-  // function is f = cosstep * sin (sinstep * x)
-  // sinstep * x = [-p; -p/2;  0; p/2; p/2]
-  //        y = [   0;    -1;  0;  -1;    0]
-  if (deviceConnected) {
-    delay(3000);
-    float* sinstep, *cosstep;
-
-
-    sinstep = reinterpret_cast<float*>(SinStepCharacteristics.getData());
-    cosstep = reinterpret_cast<float*>(CosStepCharacteristics.getData());
-
-    #ifdef DEBUG
-      // Serial.print("sinstep ");
-      // Serial.println(*sinstep);
-      // Serial.print("cosstep ");
-      // Serial.println(*cosstep);
-    #endif 
-
-    // float x1 = 0, x2 = 0;
-    for (int i = 0; i < size; i++){
-      // sinxarray[i] = sin(x1);
-      // cosxarray[i] = cos(x2);
-      sinxarray[i] = ps++;
-      // cosxarray[i] = pc++;
-      // x1 += *sinstep;
-      // x2 += *cosstep;
-    }
-
-    #ifdef DEBUG
-      // for (int i = 0 ; i < size; i ++){
-      //   Serial.print(sinxarray[i]); Serial.print( ' '); Serial.println(cosxarray[i]);
-      // }
-      Serial.print("Start Index = ");
-      Serial.print(sinxarray[0]); Serial.print( ' '); /*Serial.println(cosxarray[0]);*/
-      Serial.print("End Index = ");
-      Serial.print(sinxarray[size - 1]); Serial.print( ' '); /*Serial.println(cosxarray[size - 1]);*/
-      Serial.println();
-    #endif
-    
-    #ifdef IFPACKAGE
-      
-      // dataSin.AddData(sinxarray, size);
-
-      
-      TitledSend(SinXCharacteristics, reinterpret_cast<uint8_t*>(sinxarray), 10000, 400, -2, 0);
-      // dataCos.AddData(cosxarray, size);
-      // SendLongData(SinXCharacteristics, dataSin.GetData(), dataSin.GetLength(), 508, 20 ); 
-
-      
-      // dataSin.Clear();
-      // SendLongData(CosXCharacteristics, dataCos.GetData(), dataCos.GetLength() );
-    #else
-      SinXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&sinxarray), sizeof(sinxarray));
-      CosXCharacteristics.setValue(reinterpret_cast<uint8_t*>(&cosxarray), sizeof(cosxarray));
-    #endif
-    
-    // SinXCharacteristics.notify();
-    // CosXCharacteristics.notify();
-
-    
-  }
-  else {
-    #ifdef DEBUG
-      Serial.println("Disconnected");
-    #endif
-    pServer->getAdvertising()->start();
-    delay(1000);
-
-  }
 }

@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <string>
 #include <cstring>
+#include "PackageTemplate.h"
 
 
 /**
@@ -16,7 +17,7 @@
  * Размер всего пакета составляет (416Б)
  * |HEAD(8Б)|NUM(4Б)|MCU(2Б)|'<'|DATA(400Б)|'>'|
  */
-class TemplatePackage{
+class ECGPackage : PackageTemplate{
 private:
 
     enum{
@@ -43,49 +44,50 @@ private:
     uint8_t packArray[packLen];
 
 public:
-    TemplatePackage(std::string name = "", int32_t number = -1, int16_t mnu = -1, uint8_t* data = nullptr, int len = -1){
-        SetTitle(name);
-        SetNumber(number);
-        SetMNU(mnu);
-        SetData(data, len);
+
+    ECGPackage(std::string name = "", int32_t number = -1, int16_t mnu = -1, uint8_t* data = nullptr, int len = -1){
+        VirtualSetTitle(name);
+        VirtualSetNumber(number);
+        VirtualSetMNU(mnu);
+        VirtualSetData(data, len);
 
         memcpy(&packArray[indices::il], &l, sizeof(l));
         memcpy(&packArray[indices::ir], &r, sizeof(r));
     }
 
-    void SetTitle(std::string name){
+    void VirtualSetTitle(std::string name){
         if (name.length() < 1) return;
         int len = titleLen > name.length() ? name.length() : titleLen;
         for (int i = 0; i < len; i++) title[i] = name[i];
         memcpy(&packArray[indices::ihead], title, titleLen);
     }
 
-    void SetNumber(int32_t num){
+    void VirtualSetNumber(int32_t num){
         number = num;
         uint8_t * toWrite = reinterpret_cast<uint8_t *>(&num);
         memcpy(&packArray[indices::inum], toWrite, sizeof(num));
     }
 
-    void SetMNU(int16_t vmnu){
+    void VirtualSetMNU(int16_t vmnu){
         mnu = vmnu;
         uint8_t * toWrite = reinterpret_cast<uint8_t *>(&vmnu);
         memcpy(&packArray[indices::imnu], toWrite, sizeof(vmnu));
     }
 
-    void SetData(uint8_t * data, int size){
+    void VirtualSetData(uint8_t * data, int size){
         if (data == nullptr || size == -1) return;
         memcpy(&packArray[indices::idata], data, (size < dataLen ? size : dataLen));
     }
 
-    uint8_t * GetUsefulData(){
+    uint8_t * VirtualGetUsefulData(){
         return this->packArray + indices::idata;
     }
 
-    uint8_t * GetRawData(){
+    uint8_t * VirtualGetRawData(){
         return this->packArray;
     }
 
-    int GetLen(){
+    int VirtualGetLen(){
         return packLen;
     }
 
