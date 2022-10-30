@@ -2,6 +2,7 @@
 #include "TitledSend/ECGpackage.h"
 #include "Config/BLEConfigs.h"
 #include "Tools/toString.h"
+#include "ECG/read.h"
 
 #include <Arduino.h>
 
@@ -11,11 +12,14 @@ int battery = 100;
 std::string date = "18.09.2022";
 float pi = 3.141592653589793238;
 
-const int size = 10000/sizeof(float);
+const int size = 400/sizeof(float);
 float array[size];
 
 void setup(){
     Serial.begin(115200);
+
+    pinMode(2, INPUT); // Setup for leads off detection LO +
+    pinMode(4, INPUT); // Setup for leads off detection LO -
 
     SetupBLE();
     BatteryCharacteristics.setValue(to_str(battery));
@@ -25,30 +29,36 @@ void setup(){
     BLEStart();
 }
 
-int staticIndex = 0;
 
 ECGPackage pack ("ECG_DATA", 0, -10);
 BLESend Sender((PackageTemplate&)pack, SinXCharacteristics);
+ECG ecg;
+
+int staticIndex = 0;
 
 void loop() {
     if (deviceConnected) {
-        delay(3000);
-        float* sinstep, *cosstep;
+
+        // float* sinstep, *cosstep;
 
 
-        sinstep = reinterpret_cast<float*>(SinStepCharacteristics.getData());
-        cosstep = reinterpret_cast<float*>(CosStepCharacteristics.getData());
+        // sinstep = reinterpret_cast<float*>(SinStepCharacteristics.getData());
+        // cosstep = reinterpret_cast<float*>(CosStepCharacteristics.getData());
 
         for (int i = 0; i < size; i++){
-            array[i] = ++staticIndex;
+            array[i] = ecg.Read();
+            delay(10);
         }
 
-        Sender.Send(reinterpret_cast<uint8_t*>(&array), 10000, 400, 0);
+        Sender.SendSingle(reinterpret_cast<uint8_t*>(&array), 400, staticIndex++);
+        
     
     }
     else {
         pServer->getAdvertising()->start();
-        delay(1000);
+        delay(3000);
     }
+
+    
 
 }

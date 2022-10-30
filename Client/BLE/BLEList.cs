@@ -34,6 +34,11 @@ namespace Client.BLE
             return deviceNames;
         }
 
+        public void Stop()
+        {
+            BLEObserver.Dispose();
+        }
+
         
     }
     

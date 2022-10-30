@@ -1,5 +1,6 @@
 ﻿using Client.BLE;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,6 +19,8 @@ namespace Client
         BLEesp32 esp32;
         Timer UpdateTimer = new System.Windows.Forms.Timer();
 
+       
+
         public DeviceFrame(ulong uuid)
         {
             InitializeComponent();
@@ -28,57 +31,35 @@ namespace Client
             chart1.Series.Add("Sin");
             chart1.Series.Add("Cos");
             chart1.Series["Sin"].BorderWidth = 3;
-            chart1.Series["Cos"].BorderWidth = 3;
+            chart1.Series["Sin"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+        
         }
 
 
         private void DeviceFrame_Load(object sender, EventArgs e)
         {
             
-            UpdateTimer.Interval = 100;
+            UpdateTimer.Interval = 1000;
             UpdateTimer.Enabled = true;
             UpdateTimer.Tick += new EventHandler(UpdateValues);
             //hScrollBar1.Value = (int)esp32.wide;
             //hScrollBar2.Value = (int)esp32.height;
 
+             
         }
+        
 
         private void UpdateValues(Object myObject,
                                             EventArgs myEventArgs)
         {
-            ////Console.Write("x = {");
-            ////Array.ForEach(esp32.sinx, Console.Write);
-            ////Console.Write("} \ny = {");
-            ////Array.ForEach(esp32.cosx, Console.Write);
-            ////Console.WriteLine("}");
-
-            //esp32.UpdateStepCosAsync();
-            //esp32.UpdateStepSinAsync();
 
 
 
-            ////hScrollBar1.Value = (int)esp32.wide;
-            ////hScrollBar2.Value = (int)esp32.height;
-            //try
-            //{
-            //    chart1.Series["Sin"].Points.Clear();
-            //    chart1.Series["Cos"].Points.Clear();
-            //}
-            //catch (System.NullReferenceException e)
-            //{
-            //    Console.WriteLine(e.Message);
-            //}
+            chart1.Series["Sin"].Points.DataBindY(esp32.sinx);
 
-            //float x1 = 0, x2 = 0;
 
-            //for (int i = 0; i < esp32.GetPackSize() / 5; i++)
-            //{
-            //    chart1.Series["Sin"].Points.AddXY(x1, esp32.sinx[i]);
-            //    chart1.Series["Cos"].Points.AddXY(x2, esp32.cosx[i]);
-            //    x1 += esp32.stepSin; x2 += esp32.stepCos;
-            //    chart1.Series["Sin"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            //    chart1.Series["Cos"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            //}
+
+
 
         }
 

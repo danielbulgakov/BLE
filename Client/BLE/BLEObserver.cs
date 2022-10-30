@@ -9,7 +9,7 @@ using Windows.Devices.Bluetooth.GenericAttributeProfile;
 
 namespace Client.BLE
 {
-    internal class BLEObserver
+    internal class BLEObserver : IDisposable
     {
         BluetoothLEAdvertisementWatcher Watcher { get; set; }
         public List<BLEDevice> DevicesList { get; set; } = new List<BLEDevice>();
@@ -47,5 +47,9 @@ namespace Client.BLE
             DevicesList.Remove(DevicesList.Find(var => args.Equals(var)));
         }
 
+        public void Dispose()
+        {
+            this.Watcher.Stop();
+        }
     }
 }

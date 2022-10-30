@@ -36,8 +36,12 @@ namespace Client.BLE
 
         public float[] sinx { get; private set; } = new float[packSize];
         public float[] cosx { get; private set; } = new float[packSize];
+
+        public int ind { get; private set; }
         
         public Timer UpdateTimer { get; }
+
+        
 
         public BLEesp32(ulong uuid)
         {
@@ -82,18 +86,22 @@ namespace Client.BLE
             this.stepCos = stepCos;
             esp32.WriteRawAsync(ServiceUUID, heightUUID, BitConverter.GetBytes(stepCos));
         }
-
+        int ddd = 0;
+      
+        ParsePack pp = new ParsePack();
         private void XChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
         {
+            Console.WriteLine(ddd);
+            ddd++;
 
             var raw = ReadFromBuffer(args.CharacteristicValue);
 
-            ParsePack pp = new ParsePack();
             pp.Parse(raw);
-            
-            sinx = ToFloatArray(raw);
+            ind = pp.Num;
+            sinx = pp.Data;
 
-            toLog("..\\..\\logs\\Xlog.txt", pp.toLog(), null);
+
+            //toLog("..\\..\\logs\\Xlog.txt", pp.toLog(), null);
 
         }
 

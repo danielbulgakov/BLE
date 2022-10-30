@@ -64,6 +64,7 @@ namespace Client
             string item = BLEList.SelectedItem.ToString();
             bLEController.ConnectDevice = (ulong.Parse(item.Substring(item.LastIndexOf(" ") + 1)));
             DeviceFrame frame = new DeviceFrame(bLEController.ConnectDevice);
+            bLEController.Stop();
             frame.Show();
             this.Hide();
         }
